@@ -32,7 +32,8 @@ function App() {
   // Logic: Cek LocalStorage dulu (jika user pernah override), jika kosong ambil dari ENV Vercel
   const [scriptUrl, setScriptUrl] = useState(() => {
     const local = localStorage.getItem('attendance_script_url');
-    const env = (import.meta as any).env.VITE_GOOGLE_SCRIPT_URL;
+    // Fix: Optional chaining for env to prevent crash if env is undefined
+    const env = (import.meta as any).env?.VITE_GOOGLE_SCRIPT_URL;
     return local || env || '';
   });
 
@@ -223,7 +224,8 @@ function App() {
     e.preventDefault();
     // Use Environment Variable for Password, fallback to 'admin123' if not set
     // Cast import.meta to any to avoid TS error: Property 'env' does not exist on type 'ImportMeta'
-    const adminPass = (import.meta as any).env.VITE_ADMIN_PASSWORD || 'admin123';
+    // Fix: Optional chaining for env to prevent crash
+    const adminPass = (import.meta as any).env?.VITE_ADMIN_PASSWORD || 'admin123';
     
     if (loginPassword === adminPass) {
         localStorage.setItem('attendance_admin_auth', 'true');
