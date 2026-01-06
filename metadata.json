@@ -1,0 +1,5 @@
+{
+  "name": "Absensi Guru Pro",
+  "description": "Sistem manajemen absensi guru dengan tabel dinamis yang memungkinkan kustomisasi kolom (tambah, edit, hapus) secara fleksibel.",
+  "requestFramePermissions": []
+}
