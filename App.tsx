@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Settings, Users, FileSpreadsheet, FileText, UserPlus, Table, Pencil, Loader2, LogIn, LogOut, Lock, Cloud, RefreshCw, CheckCircle2, AlertCircle, Trash2, Search, Calendar, Filter, XCircle, CalendarDays } from 'lucide-react';
+import { Settings, Users, FileSpreadsheet, FileText, UserPlus, Table, Pencil, Loader2, LogIn, LogOut, Lock, Cloud, RefreshCw, CheckCircle2, AlertCircle, Trash2, Search, Calendar, Filter, XCircle, CalendarDays, Eye, EyeOff } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -26,6 +26,7 @@ function App() {
   });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [loginPassword, setLoginPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const [loginError, setLoginError] = useState('');
 
   // Sync State
@@ -151,8 +152,14 @@ function App() {
   };
 
   const filteredTeachers = useMemo(() => {
-      if (!searchQuery) return teachers;
-      return teachers.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()));
+      let result = teachers;
+      
+      if (searchQuery) {
+          result = teachers.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()));
+      }
+      
+      // Sort alphabetically by name
+      return [...result].sort((a, b) => a.name.localeCompare(b.name));
   }, [teachers, searchQuery]);
 
   const filteredColumns = useMemo(() => {
@@ -629,10 +636,24 @@ function App() {
             {loginError && <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md">{loginError}</div>}
             <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                <input type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)}
-                  className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autoFocus />
+                <div className="relative">
+                  <input 
+                    type={showPassword ? "text" : "password"}
+                    value={loginPassword} 
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pr-10" 
+                    autoFocus 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
             </div>
-            <div className="pt-2 text-xs text-slate-400">Hint: Password <b>admin123</b> (atau sesuai env)</div>
+            
             <div className="flex justify-end gap-3 pt-4">
                 <Button variant="ghost" type="button" onClick={() => setIsLoginModalOpen(false)}>Batal</Button>
                 <Button type="submit">Login</Button>
